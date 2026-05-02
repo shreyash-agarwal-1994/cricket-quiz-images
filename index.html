@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guess the Cricketer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Source Sans 3',sans-serif;background:#f9f9f7;color:#1a1a1a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem;}
+    .wrap{width:100%;max-width:580px;}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+    .title{font-size:22px;font-weight:600;color:#1a1a1a;}
+    .score-pill{background:#E1F5EE;color:#0F6E56;font-size:13px;font-weight:500;padding:4px 14px;border-radius:20px;border:0.5px solid #5DCAA5;}
+    .progress{height:3px;background:#e8e8e4;border-radius:2px;margin-bottom:.75rem;}
+    .prog-inner{height:100%;border-radius:2px;background:#1D9E75;transition:width .3s;}
+    .streak-bar{display:flex;gap:5px;margin-bottom:.75rem;min-height:12px;}
+    .dot{width:9px;height:9px;border-radius:50%;background:#d8d8d4;}
+    .dot.c{background:#1D9E75;}.dot.w{background:#E24B4A;}
+    .counter{font-size:13px;color:#666;margin-bottom:.75rem;}
+    .photo-area{border-radius:12px;overflow:hidden;border:0.5px solid #e0e0dc;background:#f0f0ec;height:340px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:1.1rem;}
+    .photo-area img{width:100%;height:100%;object-fit:cover;}
+    .ph{text-align:center;padding:2rem;color:#888;font-size:14px;}
+    .ph span{font-size:44px;display:block;margin-bottom:12px;}
+    .ld{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:#f0f0ec;gap:10px;}
+    .spinner{width:24px;height:24px;border:2.5px solid #ddd;border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .ld-txt{font-size:13px;color:#888;}
+    .diff-badge{position:absolute;top:10px;right:10px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:12px;}
+    .diff-2{background:#FAEEDA;color:#854F0B;}
+    .diff-3{background:#FCEBEB;color:#A32D2D;}
+    .reveal-btn{width:100%;padding:13px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:16px;font-weight:500;cursor:pointer;transition:background .2s,transform .1s;}
+    .reveal-btn:hover{background:#0F6E56;}
+    .reveal-btn:active{transform:scale(.98);}
+    .reveal-btn:disabled{opacity:.5;cursor:not-allowed;}
+    .asec{margin-top:.9rem;display:none;}
+    .asec.on{display:block;}
+    .qlabel{font-size:13px;color:#666;margin-bottom:7px;}
+    .irow{display:flex;gap:8px;}
+    .ainput{flex:1;padding:10px 14px;font-family:'Source Sans 3',sans-serif;font-size:15px;border:0.5px solid #ccc;border-radius:8px;background:#fff;color:#1a1a1a;outline:none;}
+    .ainput:focus{border:1.5px solid #1D9E75;}
+    .sbtn{padding:10px 22px;background:#fff;color:#1a1a1a;border:0.5px solid #ccc;border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s;}
+    .sbtn:hover{background:#f4f4f0;}
+    .hint{display:inline-block;background:#FAEEDA;color:#854F0B;font-size:12px;font-weight:500;padding:3px 10px;border-radius:12px;margin-top:7px;border:0.5px solid #FAC775;}
+    .rc{border-radius:8px;padding:12px 15px;margin-top:.9rem;font-size:14px;font-weight:500;display:none;}
+    .rc.ok{display:block;background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;}
+    .rc.no{display:block;background:#FCEBEB;color:#A32D2D;border:0.5px solid #F09595;}
+    .nbtn{width:100%;margin-top:.9rem;padding:11px;background:#fff;color:#0F6E56;border:1px solid #1D9E75;border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:500;cursor:pointer;display:none;transition:background .15s;}
+    .nbtn.on{display:block;}
+    .nbtn:hover{background:#E1F5EE;}
+    .attr{margin-top:.75rem;font-size:11px;color:#aaa;text-align:center;}
+    .attr a{color:#aaa;text-decoration:none;}
+    .attr a:hover{text-decoration:underline;}
+    .img-skip{font-size:12px;color:#aaa;margin-top:6px;text-align:center;}
+    /* end screen */
+    .endscreen{display:none;text-align:center;padding:2.5rem 1rem;}
+    .endscreen.on{display:block;}
+    .end-trophy{font-size:60px;margin-bottom:1rem;}
+    .end-title{font-size:24px;font-weight:600;color:#1a1a1a;margin-bottom:.4rem;}
+    .end-score{font-size:52px;font-weight:700;color:#1D9E75;margin-bottom:.25rem;line-height:1;}
+    .end-sub{font-size:15px;color:#666;margin-bottom:1.75rem;}
+    .end-breakdown{display:flex;justify-content:center;gap:1.25rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .end-stat{background:#f0f0ec;border-radius:10px;padding:.85rem 1.5rem;text-align:center;min-width:80px;}
+    .end-stat-num{font-size:26px;font-weight:600;color:#1a1a1a;}
+    .end-stat-lbl{font-size:12px;color:#888;margin-top:2px;}
+    .end-streak{display:flex;justify-content:center;gap:6px;margin-bottom:1.75rem;flex-wrap:wrap;}
+    .play-again-btn{padding:13px 36px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:16px;font-weight:500;cursor:pointer;transition:background .2s;}
+    .play-again-btn:hover{background:#0F6E56;}
+    footer{margin-top:2rem;text-align:center;font-size:11px;color:#bbb;}
+    footer a{color:#bbb;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="title">Guess the Cricketer</span>
+    <span class="score-pill" id="pill">Score: 0 / 0</span>
+  </div>
+  <div class="progress"><div class="prog-inner" id="prog" style="width:0%"></div></div>
+  <div class="streak-bar" id="streak"></div>
+  <p class="counter" id="counter">Ready — 10 cricketers loaded!</p>
+
+  <div id="game-area">
+    <div class="photo-area" id="photo-area">
+      <div class="ph" id="ph"><span>🏏</span>Click "Show Photo" to begin</div>
+      <div class="ld" id="ld"><div class="spinner"></div><span class="ld-txt">Loading photo…</span></div>
+      <img id="pimg" style="display:none;" alt="Cricketer to identify"/>
+      <div class="diff-badge" id="dbadge" style="display:none;"></div>
+    </div>
+    <button class="reveal-btn" id="rbtn" onclick="showPhoto()">Show Photo</button>
+    <div class="asec" id="asec">
+      <p class="qlabel">Who is this cricketer?</p>
+      <div class="irow">
+        <input class="ainput" id="ainput" type="text" placeholder="Type player name…" autocomplete="off"/>
+        <button class="sbtn" id="sbtn" onclick="submitAnswer()">Submit</button>
+      </div>
+      <div id="hint-wrap"></div>
+    </div>
+    <div class="rc" id="rc"></div>
+    <button class="nbtn" id="nbtn" onclick="nextRound()">Next Cricketer →</button>
+    <div class="attr" id="attr"></div>
+    <p class="img-skip" id="img-skip" style="display:none;"></p>
+  </div>
+
+  <div class="endscreen" id="endscreen">
+    <div class="end-trophy" id="end-trophy">🏆</div>
+    <div class="end-title">Quiz Complete!</div>
+    <div class="end-score" id="end-score"></div>
+    <div class="end-sub" id="end-sub"></div>
+    <div class="end-breakdown">
+      <div class="end-stat"><div class="end-stat-num" id="end-correct"></div><div class="end-stat-lbl">Correct</div></div>
+      <div class="end-stat"><div class="end-stat-num" id="end-wrong"></div><div class="end-stat-lbl">Wrong</div></div>
+      <div class="end-stat"><div class="end-stat-num" id="end-pct"></div><div class="end-stat-lbl">Accuracy</div></div>
+    </div>
+    <div class="end-streak" id="end-streak"></div>
+    <button class="play-again-btn" onclick="restartQuiz()">Play Again</button>
+  </div>
+
+  <footer>Photos from <a href="https://commons.wikimedia.org" target="_blank">Wikimedia Commons</a> under various CC licenses.</footer>
+</div>
+
+<script>
+const BASE="https://cdn.jsdelivr.net/gh/shreyash-agarwal-1994/cricket-quiz-images@main/";
+const TOTAL=10;
+
+const players=[
+  {name:"Stuart MacGill",country:"Australia",role:"Leg spinner",diff:3,
+   aliases:["macgill","stuart macgill","mac gill"],
+   hint:"Australian leg-spinner who lived in Warne's shadow",
+   img:"stuart-macgill.jpg",objPos:"43% 11%",
+   author:"paddynapper",license:"CC BY-SA 2.0",
+   source:"https://commons.wikimedia.org/wiki/File:STUART_MACGILL.jpg"},
+  {name:"Marcus Trescothick",country:"England",role:"Opener",diff:2,
+   aliases:["trescothick","marcus trescothick","marcus"],
+   hint:"Left-handed England opener, retired early due to illness",
+   img:"marcus-trescothick.jpg",objPos:"50% 20%",
+   author:"Ngb at English Wikipedia",license:"CC BY-SA 3.0",
+   source:"https://commons.wikimedia.org/wiki/File:Marcus_trescothick.jpg"},
+  {name:"Heath Streak",country:"Zimbabwe",role:"All-rounder",diff:2,
+   aliases:["streak","heath streak","heath"],
+   hint:"Zimbabwe's greatest ever captain and fast bowler",
+   img:"heath-streak.jpg",objPos:"50% 20%",
+   author:"Press Information Department",license:"Public domain",
+   source:"https://commons.wikimedia.org/wiki/File:Heath_Streak_,_Bangladesh_cricket_team_2015-04-24_(PID-0059788)_(cropped).jpg"},
+  {name:"Simon Katich",country:"Australia",role:"Batsman",diff:3,
+   aliases:["katich","simon katich","simon"],
+   hint:"Gritty left-handed Australian opener, underrated Test career",
+   img:"simon-katich.jpg",objPos:"57% 57%",
+   author:"Theannaconda at English Wikipedia",license:"Public domain",
+   source:"https://commons.wikimedia.org/wiki/File:Katich2.jpg"},
+  {name:"Matthew Hoggard",country:"England",role:"Fast bowler",diff:3,
+   aliases:["hoggard","matthew hoggard","matt hoggard"],
+   hint:"England seamer, key in the 2005 Ashes — swing was his weapon",
+   img:"matthew-hoggard.jpg",objPos:"47% 8%",
+   author:"Blnguyen",license:"CC BY-SA 3.0",
+   source:"https://commons.wikimedia.org/wiki/File:Matthew_Hoggard_bowl.jpg"},
+  {name:"Ramnaresh Sarwan",country:"West Indies",role:"Batsman",diff:3,
+   aliases:["sarwan","ramnaresh sarwan","ramnaresh"],
+   hint:"Elegant West Indian middle-order bat from Guyana",
+   img:"ramnaresh-sarwan.jpg",objPos:"50% 20%",
+   author:"BIFF Cricket",license:"CC BY 3.0",
+   source:"https://commons.wikimedia.org/wiki/File:Ramnaresh_Sarwan.jpg"},
+  {name:"Scott Styris",country:"New Zealand",role:"All-rounder",diff:3,
+   aliases:["styris","scott styris","scott"],
+   hint:"Hard-hitting NZ all-rounder, useful in both Tests and ODIs",
+   img:"scott-styris.jpg",objPos:"45% 8%",
+   author:"Avenue",license:"GFDL 1.2",
+   source:"https://commons.wikimedia.org/wiki/File:Scott_Styris_11.jpg"},
+  {name:"Mohammad Ashraful",country:"Bangladesh",role:"Batsman",diff:3,
+   aliases:["ashraful","mohammad ashraful","md ashraful"],
+   hint:"Bangladesh's first Test centurion, youngest at the time",
+   img:"mohammad-ashraful.jpg",objPos:"50% 6%",
+   author:"Mohammed Tawsif Salam",license:"CC BY-SA 3.0",
+   source:"https://commons.wikimedia.org/wiki/File:Mohammad_Ashraful_training,_23_January,_2009,_Dhaka_SBNS.jpg"},
+  {name:"Makhaya Ntini",country:"South Africa",role:"Fast bowler",diff:2,
+   aliases:["ntini","makhaya ntini","makhaya"],
+   hint:"South Africa's first Black African cricketer, relentless pacer",
+   img:"makhaya-ntini.jpg",objPos:"50% 27%",
+   author:"PaddyBriggs",license:"Public domain",
+   source:"https://commons.wikimedia.org/wiki/File:Ntini.jpg"},
+  {name:"Dwayne Smith",country:"West Indies",role:"All-rounder",diff:3,
+   aliases:["dwayne smith","smith","d smith"],
+   hint:"West Indian big-hitting opener, often confused with Dwayne Bravo",
+   img:"dwayne-smith.jpg",objPos:"47% 6%",
+   author:"paddynapper",license:"CC BY-SA 2.0",
+   source:"https://commons.wikimedia.org/wiki/File:DWAYNE_SMITH.jpg"},
+];
+
+const ratings=[
+  {min:90,trophy:"🏆",msg:"Outstanding! You really know your cricket."},
+  {min:70,trophy:"🥇",msg:"Excellent — serious cricket knowledge!"},
+  {min:50,trophy:"🥈",msg:"Good effort — a solid cricket fan."},
+  {min:30,trophy:"🥉",msg:"Not bad — keep watching more cricket!"},
+  {min:0, trophy:"😅",msg:"Tough quiz! These were hard ones."},
+];
+
+const diffLabel={2:"Medium",3:"Hard"};
+const diffClass={2:"diff-2",3:"diff-3"};
+let deck,idx,score,hist,current,live,questionsAnswered;
+
+function init(){
+  deck=[...players].sort(()=>Math.random()-.5);
+  idx=0;score=0;hist=[];current=null;live=false;questionsAnswered=0;
+}
+init();
+
+function showPhoto(){
+  if(questionsAnswered>=TOTAL){showEndScreen();return;}
+  if(idx>=deck.length){deck=[...players].sort(()=>Math.random()-.5);idx=0;}
+  current=deck[idx++];live=false;
+  const ph=document.getElementById('ph'),ld=document.getElementById('ld');
+  const pimg=document.getElementById('pimg'),rbtn=document.getElementById('rbtn');
+  const dbadge=document.getElementById('dbadge');
+  ph.style.display='none';ld.style.display='flex';
+  pimg.style.display='none';dbadge.style.display='none';
+  rbtn.disabled=true;
+  document.getElementById('asec').classList.remove('on');
+  document.getElementById('rc').className='rc';
+  document.getElementById('nbtn').classList.remove('on');
+  document.getElementById('ainput').value='';
+  document.getElementById('ainput').disabled=false;
+  document.getElementById('sbtn').disabled=false;
+  document.getElementById('hint-wrap').innerHTML='';
+  document.getElementById('attr').innerHTML='';
+  document.getElementById('img-skip').style.display='none';
+  document.getElementById('counter').textContent='Question '+(questionsAnswered+1)+' of '+TOTAL;
+
+  const img=new Image();
+  img.onload=function(){
+    ld.style.display='none';
+    pimg.src=img.src;
+    pimg.style.objectPosition=current.objPos;
+    pimg.style.display='block';
+    dbadge.textContent=diffLabel[current.diff];
+    dbadge.className='diff-badge '+diffClass[current.diff];
+    dbadge.style.display='block';
+    document.getElementById('asec').classList.add('on');
+    document.getElementById('hint-wrap').innerHTML='<span class="hint">Hint: '+current.hint+'</span>';
+    rbtn.disabled=false;live=true;
+    setTimeout(function(){document.getElementById('ainput').focus();},80);
+  };
+  img.onerror=function(){
+    ld.style.display='none';
+    ph.style.display='block';
+    ph.innerHTML='<span>⚠️</span>Photo unavailable for '+current.name+' — skipping…';
+    document.getElementById('img-skip').style.display='block';
+    document.getElementById('img-skip').textContent='(Check filename: "'+current.img+'" in your GitHub repo)';
+    rbtn.disabled=false;
+    setTimeout(function(){if(questionsAnswered<TOTAL)showPhoto();},2000);
+  };
+  img.src=BASE+current.img+'?v='+Date.now();
+}
+
+function submitAnswer(){
+  if(!live||!current)return;
+  const raw=document.getElementById('ainput').value.trim().toLowerCase();
+  if(!raw)return;
+  questionsAnswered++;
+  const hit=current.aliases.some(function(a){return raw===a||raw.includes(a)||a.includes(raw);});
+  const rc=document.getElementById('rc');
+  if(hit){score++;hist.push('c');rc.className='rc ok';rc.textContent='✓ Correct! That\'s '+current.name+' ('+current.country+') 🎉';}
+  else{hist.push('w');rc.className='rc no';rc.textContent='✗ Not quite — that was '+current.name+' ('+current.country+').';}
+  document.getElementById('pill').textContent='Score: '+score+' / '+questionsAnswered;
+  document.getElementById('prog').style.width=Math.round(questionsAnswered/TOTAL*100)+'%';
+  updateStreak();
+  document.getElementById('attr').innerHTML='Photo: <a href="'+current.source+'" target="_blank">'+current.author+'</a> · '+current.license+' · Wikimedia Commons';
+  document.getElementById('nbtn').classList.add('on');
+  document.getElementById('nbtn').textContent=questionsAnswered>=TOTAL?'See Results →':'Next Cricketer →';
+  document.getElementById('sbtn').disabled=true;
+  document.getElementById('ainput').disabled=true;
+  live=false;
+}
+
+function nextRound(){
+  if(questionsAnswered>=TOTAL){showEndScreen();return;}
+  showPhoto();
+}
+
+function showEndScreen(){
+  document.getElementById('game-area').style.display='none';
+  document.getElementById('rbtn').style.display='none';
+  const pct=Math.round(score/TOTAL*100);
+  const rating=ratings.find(function(r){return pct>=r.min;});
+  document.getElementById('end-trophy').textContent=rating.trophy;
+  document.getElementById('end-score').textContent=score+' / '+TOTAL;
+  document.getElementById('end-sub').textContent=rating.msg;
+  document.getElementById('end-correct').textContent=score;
+  document.getElementById('end-wrong').textContent=TOTAL-score;
+  document.getElementById('end-pct').textContent=pct+'%';
+  document.getElementById('end-streak').innerHTML=hist.map(function(h){return '<div class="dot '+h+'"></div>';}).join('');
+  document.getElementById('endscreen').classList.add('on');
+  document.getElementById('pill').textContent='Score: '+score+' / '+TOTAL;
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('counter').textContent='Quiz complete!';
+}
+
+function restartQuiz(){
+  init();
+  document.getElementById('endscreen').classList.remove('on');
+  document.getElementById('game-area').style.display='block';
+  document.getElementById('rbtn').style.display='block';
+  document.getElementById('rbtn').disabled=false;
+  document.getElementById('pill').textContent='Score: 0 / 0';
+  document.getElementById('prog').style.width='0%';
+  document.getElementById('streak').innerHTML='';
+  document.getElementById('counter').textContent='Ready — 10 cricketers loaded!';
+  document.getElementById('ph').style.display='block';
+  document.getElementById('ph').innerHTML='<span>🏏</span>Click "Show Photo" to begin';
+  document.getElementById('pimg').style.display='none';
+  document.getElementById('dbadge').style.display='none';
+  document.getElementById('asec').classList.remove('on');
+  document.getElementById('rc').className='rc';
+  document.getElementById('nbtn').classList.remove('on');
+  document.getElementById('attr').innerHTML='';
+}
+
+function updateStreak(){
+  document.getElementById('streak').innerHTML=hist.slice(-10).map(function(h){return '<div class="dot '+h+'"></div>';}).join('');
+}
+
+document.getElementById('ainput').addEventListener('keydown',function(e){if(e.key==='Enter')submitAnswer();});
+</script>
+</body>
+</html>

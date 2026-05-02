@@ -3,5 +3,51 @@
         "author": "paddynapper",
         "license": "CC BY-SA 2.0",
         "source": "https://commons.wikimedia.org/wiki/File:STUART_MACGILL.jpg"
+    },
+    "marcus-trescothick.jpg": {
+        "author": "Ngb at English Wikipedia",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Marcus_trescothick.jpg"
+    },
+	"heath-streak.jpg": {
+        "author": "Press Information Department",
+        "license": "Public domain",
+        "source": "https://commons.wikimedia.org/wiki/File:Heath_Streak_,_Bangladesh_cricket_team_2015-04-24_(PID-0059788)_(cropped).jpg"
+    },
+	"simon-katich.jpg": {
+        "author": "Theannaconda at English Wikipedia",
+        "license": "Public domain",
+        "source": "https://commons.wikimedia.org/wiki/File:Katich2.jpg"
+    },
+	"matthew-hoggard.jpg": {
+        "author": "Blnguyen",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Matthew_Hoggard_bowl.jpg"
+    },
+	"ramnaresh-sarwan.jpg": {
+        "author": "BIFF Cricket",
+        "license": "CC BY 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Ramnaresh_Sarwan.jpg"
+    },
+	"scott-styris.jpg": {
+        "author": "Avenue",
+        "license": "GFDL 1.2",
+        "source": "https://commons.wikimedia.org/wiki/File:Scott_Styris_11.jpg"
+    },
+	"mohammad-ashraful.jpg": {
+        "author": "Mohammed Tawsif Salam",
+        "license": "CC BY-SA 3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Mohammad_Ashraful_training,_23_January,_2009,_Dhaka_SBNS.jpg"
+    },
+	"makhaya-ntini.jpg": {
+        "author": "PaddyBriggs",
+        "license": "Public domain",
+        "source": "https://commons.wikimedia.org/wiki/File:Ntini.jpg"
+    },
+	,
+	"dwayne-smith.jpg": {
+        "author": "paddynapper",
+        "license": "CC BY-SA 2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:DWAYNE_SMITH.jpg"
     }
 }
